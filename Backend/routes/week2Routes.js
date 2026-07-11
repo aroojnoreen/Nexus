@@ -29,13 +29,12 @@ const upload = multer({ storage: storage });
 
 // Import your week 2 controller logic
 const { protect } = require('../middleware/authMiddleware');
-const { uploadDocument, getAllDocuments } = require('../controllers/documentController');
+const { uploadDocument } = require('../controllers/documentController');
 const { createMeeting, getAllMeetings } = require('../controllers/meetingController');
 
 // Week 2 Routing Endpoints
 router.route('/documents')
-    .post(protect, upload.single('file'), uploadDocument)
-    .get(protect, getAllDocuments);
+    .post(protect, upload.single('file'), uploadDocument); // Removed the broken .get() method!
 
 router.route('/meetings')
     .post(protect, createMeeting)
