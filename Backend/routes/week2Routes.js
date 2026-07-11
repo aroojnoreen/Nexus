@@ -8,11 +8,9 @@ const os = require('os');
 // Serverless-safe file upload configuration
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        // If running in production (Vercel), use the safe OS temporary directory
         if (process.env.NODE_ENV === 'production') {
             cb(null, os.tmpdir());
         } else {
-            // Locally, continue using your standard uploads folder
             const localPath = 'uploads/';
             if (!fs.existsSync(localPath)) {
                 fs.mkdirSync(localPath, { recursive: true });
@@ -30,14 +28,18 @@ const upload = multer({ storage: storage });
 // Import your week 2 controller logic
 const { protect } = require('../middleware/authMiddleware');
 const { uploadDocument } = require('../controllers/documentController');
-const { createMeeting, getAllMeetings } = require('../controllers/meetingController');
+const { scheduleMeeting, updateMeetingStatus } = require('../controllers/meetingController');
 
-// Week 2 Routing Endpoints
+// 1. Document Upload Endpoint
 router.route('/documents')
-    .post(protect, upload.single('file'), uploadDocument); // Removed the broken .get() method!
+    .post(protect, upload.single('file'), uploadDocument);
 
+// 2. Meeting Scheduling Endpoint
 router.route('/meetings')
-    .post(protect, createMeeting)
-    .get(protect, getAllMeetings);
+    .post(protect, scheduleMeeting);
+
+// 3. Meeting Status Update Endpoint (Requires ID parameter)
+router.route('/meetings/:id')
+    .put(protect, updateMeetingStatus);
 
 module.exports = router;
