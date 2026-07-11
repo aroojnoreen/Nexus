@@ -27,10 +27,17 @@ app.use('/api/pitches', require('./routes/pitchRoutes'));
 // Week 2: Meetings & Documents Chamber Operations
 app.use('/api/week2', require('./routes/week2Routes'));
 
-// 5. Initialize Server Listener
-const server = app.listen(PORT, () => {
-    console.log(`🚀 Server is blasting off on port ${PORT}`);
-});
+// Bind the listener only if we are running locally, not on Vercel's production platform
+let server;
+if (process.env.NODE_ENV !== 'production') {
+    server = app.listen(PORT, () => {
+        console.log(`🚀 Server is blasting off on port ${PORT}`);
+    });
+} else {
+    // On Vercel, we still need a server instance created for Socket.io to bind safely
+    const http = require('http');
+    server = http.createServer(app);
+}
 
 // 6. WebRTC Live Signaling Engine Integration (Socket.io)
 const io = require('socket.io')(server, {
@@ -48,3 +55,4 @@ io.on('connection', (socket) => {
         });
     });
 });
+module.exports = app;
