@@ -18,7 +18,7 @@ export const RegisterPage: React.FC = () => {
   const { register } = useAuth();
   const navigate = useNavigate();
   
-  const handleSubmit = async (e: React.FormEvent) => {
+const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     
@@ -31,7 +31,9 @@ export const RegisterPage: React.FC = () => {
     setIsLoading(true);
     
     try {
-      await register(name, email, password, role);
+      // Pass the parameters wrapped cleanly in a single object!
+      await register({ name, email, password, role });
+      
       // Redirect based on user role
       navigate(role === 'entrepreneur' ? '/dashboard/entrepreneur' : '/dashboard/investor');
     } catch (err) {

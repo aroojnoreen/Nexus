@@ -16,13 +16,15 @@ export const LoginPage: React.FC = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
   
-  const handleSubmit = async (e: React.FormEvent) => {
+ const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
     setIsLoading(true);
     
     try {
-      await login(email, password, role);
+      // Pass the arguments cleanly packed inside a single credentials object!
+      await login({ email, password, role });
+      
       // Redirect based on user role
       navigate(role === 'entrepreneur' ? '/dashboard/entrepreneur' : '/dashboard/investor');
     } catch (err) {
@@ -30,7 +32,6 @@ export const LoginPage: React.FC = () => {
       setIsLoading(false);
     }
   };
-  
   // For demo purposes, pre-filled credentials
   const fillDemoCredentials = (userRole: UserRole) => {
     if (userRole === 'entrepreneur') {
